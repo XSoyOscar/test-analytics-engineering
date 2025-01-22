@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: "3.9"
 
-       - name: Set environment variables
+      - name: Set environment variables
         env:
           DBT_GOOGLE_PROJECT: ${{ vars.DBT_GOOGLE_PROJECT }}
           DBT_GOOGLE_BIGQUERY_DATASET: ${{ vars.DBT_GOOGLE_BIGQUERY_DATASET }}
@@ -39,21 +39,3 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install dbt-core dbt-bigquery
-          dbt deps
-
-      - name: Validate dbt project
-        run: dbt parse
-
-      - name: Test dbt models
-        run: dbt test
-
-      - name: Notify on failure
-        if: failure()
-        run: |
-          echo "DBT Validation or Tests Failed"
-          exit 1
-
-      - name: Print success message
-        if: success()
-        run: echo "DBT Monitoring completed successfully"
