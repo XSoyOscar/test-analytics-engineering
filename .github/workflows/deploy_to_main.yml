@@ -7,10 +7,14 @@ on:
 
 env:
   DBT_PROFILES_DIR: ./ 
+  DBT_GOOGLE_PROJECT: ${{ secrets.DBT_GOOGLE_PROJECT }}
+  DBT_GOOGLE_BIGQUERY_DATASET: ${{ secrets.DBT_GOOGLE_BIGQUERY_DATASET }}
+  DBT_GOOGLE_BIGQUERY_LOCATION: ${{ secrets.DBT_GOOGLE_BIGQUERY_LOCATION }}
+  KEYFILE: ${{ secrets.DBT_GOOGLE_BIGQUERY_KEYFILE }}
 
 jobs:
   deploy_main:
-    name: Validate and Test PR
+    name: Validate and Test Deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -35,8 +39,6 @@ jobs:
       - name: Authenticate using service account
         run: echo "$KEYFILE" > ./dbt-service-account.json
         shell: bash
-        env:
-          KEYFILE: ${{ secrets.DBT_GOOGLE_BIGQUERY_KEYFILE }}
 
       - name: Install dependencies
         run: |

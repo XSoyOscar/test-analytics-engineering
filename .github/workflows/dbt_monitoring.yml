@@ -5,7 +5,11 @@ on:
     - cron: "0 2 * * *" # 02:00 UTC
 
 env:
-  DBT_PROFILES_DIR: ./
+  DBT_PROFILES_DIR: ./ 
+  DBT_GOOGLE_PROJECT: ${{ secrets.DBT_GOOGLE_PROJECT }}
+  DBT_GOOGLE_BIGQUERY_DATASET: ${{ secrets.DBT_GOOGLE_BIGQUERY_DATASET }}
+  DBT_GOOGLE_BIGQUERY_LOCATION: ${{ secrets.DBT_GOOGLE_BIGQUERY_LOCATION }}
+  KEYFILE: ${{ secrets.DBT_GOOGLE_BIGQUERY_KEYFILE }}
 
 jobs:
   validate_and_monitor:
@@ -34,8 +38,24 @@ jobs:
       - name: Authenticate using service account
         run: echo "$KEYFILE" > ./dbt-service-account.json
         shell: bash
-        env:
-          KEYFILE: ${{ secrets.DBT_GOOGLE_BIGQUERY_KEYFILE }}
 
       - name: Install dependencies
         run: |
+          pip install dbt-core dbt-bigquery
+          dbt deps
+
+      - name: Validate dbt project
+        run: dbt parse
+
+      - name: Test dbt models
+        run: dbt test
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "DBT Validation or Tests Failed"
+          exit 1
+
+      - name: Print success message
+        if: success()
+        run: echo "DBT Monitoring completed successfully"
