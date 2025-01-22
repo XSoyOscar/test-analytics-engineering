@@ -1,0 +1,70 @@
+version: 2
+
+models:
+  - name: staging_bank_marketing
+    columns:
+      - name: age
+        tests:
+          - not_null
+      - name: job
+        tests:
+          - accepted_values:
+              values: [
+                "admin.",
+                "blue-collar",
+                "entrepreneur",
+                "housemaid",
+                "management",
+                "retired",
+                "self-employed",
+                "services",
+                "student",
+                "technician",
+                "unemployed",
+                null
+              ]
+      - name: education_level
+        tests:
+          - accepted_values:
+              values: [
+                "basic",
+                "high.school",
+                "illiterate",
+                "professional.course",
+                "university.degree",
+                null
+              ]
+      - name: marital
+        tests:
+          - accepted_values:
+              values: [
+                "single",
+                "married",
+                "divorced",
+                null
+              ]
+      - name: age_group
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["<30", "30-50", ">50"]
+      - name: subscribed_deposit
+        tests:
+          - not_null
+      - name: month
+        tests:
+          - not_null
+          - accepted_values:
+              values: [
+                "jan", "feb", "mar", "apr", "may", "jun", 
+                "jul", "aug", "sep", "oct", "nov", "dec"
+              ]
+      - name: duration
+        tests:
+          - not_null
+      - name: campaign
+        tests:
+          - not_null
+      - name: euribor3m
+        tests:
+          - not_null

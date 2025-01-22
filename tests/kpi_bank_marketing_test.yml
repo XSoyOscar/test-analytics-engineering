@@ -1,0 +1,17 @@
+unit_tests:
+  - name: test_kpi_bank_marketing_logic
+    description: "Validate KPI calculations and age group segmentation logic."
+    model: kpi_bank_marketing
+    given:
+      - input: ref('staging_bank_marketing')
+        rows:
+          - {age: 25, job: 'admin.', marital: 'single', education: 'university.degree', credit_default: 'no', subscribed_deposit: true, age_group: "<30"}
+          - {age: 40, job: 'technician', marital: 'married', education: 'high.school', credit_default: 'no', subscribed_deposit: false, age_group: "30-50"}
+          - {age: 60, job: 'services', marital: 'divorced', education: 'basic', credit_default: 'yes', subscribed_deposit: true, age_group: ">50"}
+          - {age: 18, job: 'student', marital: 'single', education: 'university.degree', credit_default: 'no', subscribed_deposit: false, age_group: "<30"}
+    expect:
+      rows:
+        - {total_contacts: 4, successful_contacts: 2, total_conversion_rate: 0.5, age_group: "<30", job: "admin.", contacts_in_segment: 1, successful_in_segment: 1, segment_conversion_rate: 1.0}
+        - {total_contacts: 4, successful_contacts: 2, total_conversion_rate: 0.5, age_group: "30-50", job: "technician", contacts_in_segment: 1, successful_in_segment: 0, segment_conversion_rate: 0.0}
+        - {total_contacts: 4, successful_contacts: 2, total_conversion_rate: 0.5, age_group: ">50", job: "services", contacts_in_segment: 1, successful_in_segment: 1, segment_conversion_rate: 1.0}
+        - {total_contacts: 4, successful_contacts: 2, total_conversion_rate: 0.5, age_group: "<30", job: "student", contacts_in_segment: 1, successful_in_segment: 0, segment_conversion_rate: 0.0}

@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: analytics_deacero
+    database: deacero-448519
+    tables:
+      - name: raw_bank_marketing
+        dataset: analytics_deacero

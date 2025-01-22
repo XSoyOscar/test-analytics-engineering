@@ -1,0 +1,15 @@
+unit_tests:
+  - name: test_age_group_logic
+    description: "Check that age groups are correctly assigned based on the age column."
+    model: staging_bank_marketing
+    given:
+      - input: source('analytics_deacero', 'raw_bank_marketing')
+        rows:
+          - {age: 25, job: 'admin.', marital: 'single', education: 'university.degree', credit_default: 'no'}
+          - {age: 40, job: 'technician', marital: 'married', education: 'high.school', credit_default: 'no'}
+          - {age: 60, job: 'services', marital: 'divorced', education: 'basic', credit_default: 'yes'}
+    expect:
+      rows:
+        - {age: 25, age_group: '<30'}
+        - {age: 40, age_group: '30-50'}
+        - {age: 60, age_group: '>50'}

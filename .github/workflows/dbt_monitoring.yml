@@ -1,0 +1,59 @@
+name: dbt_monitoring
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # 02:00 UTC
+
+env:
+  DBT_PROFILES_DIR: ./
+
+jobs:
+  validate_and_monitor:
+    name: Monitor DBT Models
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+       - name: Set environment variables
+        env:
+          DBT_GOOGLE_PROJECT: ${{ vars.DBT_GOOGLE_PROJECT }}
+          DBT_GOOGLE_BIGQUERY_DATASET: ${{ vars.DBT_GOOGLE_BIGQUERY_DATASET }}
+          DBT_GOOGLE_BIGQUERY_LOCATION: ${{ vars.DBT_GOOGLE_BIGQUERY_LOCATION }}
+        run: |
+          echo "Using project: $DBT_GOOGLE_PROJECT"
+          echo "Dataset: $DBT_GOOGLE_BIGQUERY_DATASET"
+          echo "Location: $DBT_GOOGLE_BIGQUERY_LOCATION"
+
+      - name: Authenticate using service account
+        run: echo "$KEYFILE" > ./dbt-service-account.json
+        shell: bash
+        env:
+          KEYFILE: ${{ secrets.DBT_GOOGLE_BIGQUERY_KEYFILE }}
+
+      - name: Install dependencies
+        run: |
+          pip install dbt-core dbt-bigquery
+          dbt deps
+
+      - name: Validate dbt project
+        run: dbt parse
+
+      - name: Test dbt models
+        run: dbt test
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "DBT Validation or Tests Failed"
+          exit 1
+
+      - name: Print success message
+        if: success()
+        run: echo "DBT Monitoring completed successfully"

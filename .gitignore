@@ -1,0 +1,23 @@
+plaintext
+Copy
+Edit
+# Python virtual environments
+venv/
+.venv/
+
+# dbt folders
+target/
+dbt_packages/
+logs/
+.user.yml
+
+# Configuration files
+dbt-service-account.json
+*.key.json
+keys/
+.env
+
+# System and IDE files
+.DS_Store
+.vscode/
+.idea/

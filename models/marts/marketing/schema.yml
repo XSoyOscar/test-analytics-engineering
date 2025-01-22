@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: kpi_bank_marketing
+    columns:
+      - name: total_contacts
+        tests:
+          - not_null
+      - name: successful_contacts
+        tests:
+          - not_null
+      - name: age_group
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["<30", "30-50", ">50"]
+      - name: job
+        tests:
+          - accepted_values:
+              values: [
+                "admin.",
+                "blue-collar",
+                "entrepreneur",
+                "housemaid",
+                "management",
+                "retired",
+                "self-employed",
+                "services",
+                "student",
+                "technician",
+                "unemployed",
+                null
+              ]
